@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You’re Not Me</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .background-text {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 10vw;
+      opacity: 0.05;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .foreground-text {
+      color: white;
+      font-size: 8vw;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      z-index: 10;
+    }
+
+    .foreground-text span {
+      display: inline-block;
+      transition: font-family 0.1s ease;
+    }
+
+    #kiss-button {
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      background: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    @keyframes flash {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes shockIn {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes spinny {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    #shock-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0;
+      animation: shockIn 1s ease-out forwards;
+    }
+
+    #shock-image {
+      width: 40vw;
+      max-width: 300px;
+      animation: popIn 1s ease-out, spinny 2s linear infinite;
+    }
+
+    #white-flash {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      animation: flash 0.4s ease-out;
+    }
+
+    #kiss-explosion {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+    }
+
+    .sparkle-heart {
+      position: absolute;
+      font-size: 2rem;
+      animation: sparkleBoom 1s ease-out forwards;
+      color: pink;
+      text-shadow: 0 0 5px hotpink;
+    }
+
+    @keyframes sparkleBoom {
+      0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(2) rotate(360deg);
+        opacity: 0.7;
+      }
+      100% {
+        transform: scale(0) rotate(720deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-text">We Are</div>
+  <div class="foreground-text" id="text"></div>
+  <button id="kiss-button">Kiss Me (or press K)</button>
+
+  <!-- Shock Hat Surprise -->
+  <div id="shock-container">
+    <div id="white-flash"></div>
+    <img src="Tak berjudul41.png" id="shock-image" alt="Shock Hat">
+  </div>
+
+  <!-- Kiss Explosion -->
+  <div id="kiss-explosion">
+    <div class="sparkle-heart">♡</div>
+    <div class="sparkle-heart">✨</div>
+    <div class="sparkle-heart">♡</div>
+  </div>
+  <audio id="kiss-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_643e21e02d.mp3?filename=kiss-110014.mp3"></audio>
+
+  <script>
+    const text = "You're Not Me";
+    const container = document.getElementById("text");
+    const fonts = [
+      'serif','sans-serif','monospace','cursive','fantasy',
+      'Arial','Georgia','Impact','Tahoma','Verdana','Courier New','Lucida Console',
+      'Times New Roman','Comic Sans MS','Brush Script MT','Trebuchet MS','Garamond',
+      'Palatino','Optima','Futura','Gill Sans','Franklin Gothic','Calibri','Candara','Rockwell'
+    ];
+
+    function createLetter(char) {
+      const span = document.createElement("span");
+      span.textContent = char;
+      container.appendChild(span);
+    }
+
+    text.split('').forEach(createLetter);
+
+    setInterval(() => {
+      [...container.children].forEach(letter => {
+        const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+        letter.style.fontFamily = randomFont;
+      });
+    }, 500); // 120 BPM = 500ms per beat
+
+    function smoochExplosion() {
+      const kissContainer = document.getElementById('kiss-explosion');
+      const kissSound = document.getElementById('kiss-sound');
+      const hearts = kissContainer.querySelectorAll('.sparkle-heart');
+
+      kissContainer.style.display = 'block';
+      kissSound.play();
+
+      hearts.forEach((heart) => {
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.top = Math.random() * 100 + "vh";
+        heart.style.animation = "none";
+        heart.offsetHeight;
+        heart.style.animation = "sparkleBoom 1s ease-out forwards";
+      });
+
+      setTimeout(() => {
+        kissContainer.style.display = 'none';
+      }, 1000);
+    }
+
+    document.getElementById("kiss-button").addEventListener("click", smoochExplosion);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key.toLowerCase() === "k") {
+        smoochExplosion();
+      }
+    });
+  </script>
+</body>
+  </html>
+    
